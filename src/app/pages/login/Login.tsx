@@ -1,11 +1,13 @@
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { InputLogin } from "./components/InputLogin";
 import { ButtonLogin } from "./components/ButtonLogin";
+import { UsuarioLogadoContext } from "../../shared/contexts";
 
 export const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const inputPasswordRef = useRef<HTMLInputElement>(null)
+  const usuarioLogadoContext = useContext(UsuarioLogadoContext);
 
   const handleEntrar = () => {
     console.log(email)
@@ -14,6 +16,9 @@ export const Login = () => {
 
   return (
     <div>
+      <p>
+        {usuarioLogadoContext.nomeDoUsuario}
+      </p>
       <form>
         <InputLogin
           label="Email"

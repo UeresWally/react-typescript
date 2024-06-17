@@ -1,10 +1,9 @@
-import { createContext, ReactNode } from "react";
+import { createContext } from "react";
 
 interface IUsuarioLogadoContextData {
   nomeDoUsuario: string;
-  // children: ReactNode;
 }
-const UsuarioLogadoContext = createContext<IUsuarioLogadoContextData>({} as IUsuarioLogadoContextData);
+export const UsuarioLogadoContext = createContext<IUsuarioLogadoContextData>({} as IUsuarioLogadoContextData);
 
 interface IUsuarioLogadoProviderProps {
   children: React.ReactNode;
