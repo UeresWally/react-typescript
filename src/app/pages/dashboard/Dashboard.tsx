@@ -8,13 +8,13 @@ export const Dashboard = () => {
 
   useEffect(() => {
     TarefasService.getAll()
-    .then((result) => {
-      if (result instanceof ApiException) {
-        alert(result.message)
-      } else {
-        setLista(result)
-      }
-    })
+      .then((result) => {
+        if (result instanceof ApiException) {
+          alert(result.message)
+        } else {
+          setLista(result)
+        }
+      })
   }, [])
 
   const handleInputKKeyDown: React.KeyboardEventHandler<HTMLInputElement> = useCallback((e) => {
@@ -26,15 +26,37 @@ export const Dashboard = () => {
 
       if (lista.some((listItem) => listItem.title === value)) return;
 
-      TarefasService.create({title: value, isFinished: false})
+      TarefasService.create({ title: value, isFinished: false })
+        .then((result) => {
+          if (result instanceof ApiException) {
+            alert(result.message)
+          } else {
+            setLista((oldLista) => [...oldLista, result])
+          }
+        });
+    }
+  }, [lista])
+
+  const handleToggleComplete = useCallback((id: number) => {
+    const tarefaToUpdate = lista.find((tarefa) => tarefa.id === id);
+    if (!tarefaToUpdate) return;
+
+    TarefasService.updateById(id, {
+      ...tarefaToUpdate,
+      isFinished: !tarefaToUpdate.isFinished
+    })
       .then((result) => {
         if (result instanceof ApiException) {
           alert(result.message)
         } else {
-          setLista((oldLista) => [...oldLista, result])
+          setLista(oldLista => {
+            return oldLista.map(oldListItem => {
+              if (oldListItem.id === id) return result;
+              return oldListItem;
+            })
+          })
         }
-      });
-    }
+      })
   }, [lista])
 
   return (
@@ -46,25 +68,14 @@ export const Dashboard = () => {
       <p>{lista.filter((listItem) => listItem.isFinished).length}</p>
       <ul>
         {lista.map((listItem) => {
-          return<li key={listItem.id}>
+          return <li key={listItem.id}>
             <input
               type="checkbox"
-              onChange={() => {
-                setLista(oldLista => {
-                  return oldLista.map(oldListItem => {
-                    const newIsSelected = oldListItem.title === listItem.title
-                    ? !oldListItem
-                    : oldListItem.isFinished
-                    return{
-                      ...oldListItem,
-                      isSelected: newIsSelected,
-                    }
-                  })
-                })
-              }}
+              checked={listItem.isFinished}
+              onChange={() => handleToggleComplete(listItem.id)}
             />
             {listItem.title}
-          </li>;          
+          </li>;
         })}
       </ul>
     </>
