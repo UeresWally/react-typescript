@@ -1,13 +1,14 @@
 import { useCallback, useState } from "react"
 
 
-interface IListItem {
+interface ITarefa {
+  id: number
   title: string
-  isSelected: boolean
+  isFinished: boolean
 }
 
 export const Dashboard = () => {
-  const [lista, setLista] = useState<IListItem[]>([]);
+  const [lista, setLista] = useState<ITarefa[]>([]);
 
   const handleInputKKeyDown: React.KeyboardEventHandler<HTMLInputElement> = useCallback((e) => {
     if (e.key === 'Enter') {
@@ -22,8 +23,9 @@ export const Dashboard = () => {
         return [
         ...oldLista, 
         {
+          id: oldLista.length,
           title: value,
-          isSelected: false
+          isFinished: false
         }]
       })
     }
@@ -35,10 +37,10 @@ export const Dashboard = () => {
       <input
         onKeyDown={handleInputKKeyDown}
       />
-      <p>{lista.filter((listItem) => listItem.isSelected).length}</p>
+      <p>{lista.filter((listItem) => listItem.isFinished).length}</p>
       <ul>
         {lista.map((listItem) => {
-          return<li key={listItem.title}>
+          return<li key={listItem.id}>
             <input
               type="checkbox"
               onChange={() => {
@@ -46,7 +48,7 @@ export const Dashboard = () => {
                   return oldLista.map(oldListItem => {
                     const newIsSelected = oldListItem.title === listItem.title
                     ? !oldListItem
-                    : oldListItem.isSelected
+                    : oldListItem.isFinished
                     return{
                       ...oldListItem,
                       isSelected: newIsSelected,
